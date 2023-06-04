@@ -21,6 +21,17 @@
             /* Add any additional styles for the content area */
         }
     </style>
+    <script>
+        function showMessage(message) {
+            var messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            document.body.appendChild(messageElement);
+
+            setTimeout(function() {
+                messageElement.remove();
+            }, 5000);
+        }
+    </script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">

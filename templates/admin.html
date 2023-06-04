@@ -1,0 +1,31 @@
+{% extends 'template.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Admin Page hi</h1>
+        <form action="/admin" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="csvFile">Upload CSV File:</label>
+                <input type="file" class="form-control-file" id="csvFile" name="csvFile">
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+        {%if file_uploaded:%}
+        <script>
+            window.onload = function() {
+                showMessage('File uploaded successfully!');
+            };
+    
+            function showMessage(message) {
+                var messageElement = document.createElement('div');
+                messageElement.textContent = message;
+                document.body.appendChild(messageElement);
+    
+                setTimeout(function() {
+                    messageElement.remove();
+                }, 5000);
+            }
+        </script>
+        {%endif%}
+    </div>
+{% endblock %}

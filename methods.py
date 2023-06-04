@@ -56,3 +56,16 @@ def add_students_many(year, branch, section, csv_file):
 
     # Close the MongoDB connection
     cluster.close()
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'csv'
+
+def process_csv(file):
+    # Process the uploaded CSV file
+    # Here, you can write your code to parse and handle the CSV data
+    # For example, you can use the csv module to read the file contents
+    csv_reader = csv.reader(file.read().decode('utf-8').splitlines())
+    for row in csv_reader:
+        # Process each row of the CSV data
+        # You can access the row values using row[0], row[1], etc.
+        pass
