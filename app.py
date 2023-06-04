@@ -4,7 +4,7 @@ from flask import Flask, render_template
 app = Flask(__name__)
 #mongo = PyMongo(app)
 
-@app.route("/home")
+@app.route("/")
 def home():
     return render_template("home.html")
 
