@@ -44,7 +44,7 @@ def add_students_many(year, branch, section, csv_file):
         for row in reader:
             rollno, studentname = row
             student = {
-                'rollno': rollno,
+                'rollno': int(rollno),
                 'studentname': studentname
             }
             
