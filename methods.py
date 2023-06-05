@@ -69,3 +69,21 @@ def process_csv(file):
         # Process each row of the CSV data
         # You can access the row values using row[0], row[1], etc.
         pass
+
+def get_students(yearcollection,Year=None,branch=None,section=None):
+    ('cse',)
+    years = yearcollection.find()
+    branches = ['CSE', 'IT', 'AIDS', 'AIML', 'Chemical Engineering', 'Civil', 'Mechanical', 'ECE', 'EEE']
+    
+    for i in range(len(branches)):
+        if branch.lower() == branches[i].lower():
+            branchcode = i
+
+
+    try:
+        studentyears = list(years)
+    except KeyError or NameError:
+        print("No students uploaded yet in the requested branch and section")
+    else:
+        year = studentyears[Year-1]
+        return year['branches'][branchcode]['sections'][section-1]['students']
