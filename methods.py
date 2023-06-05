@@ -79,7 +79,6 @@ def get_students(yearcollection,Year=None,branch=None,section=None):
         if branch.lower() == branches[i].lower():
             branchcode = i
 
-
     try:
         studentyears = list(years)
     except KeyError or NameError:
