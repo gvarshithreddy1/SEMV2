@@ -6,7 +6,7 @@ from methods import *
 years = [1,2,3,4]
 branches = ['CSE', 'IT', 'AIDS', 'AIML', 'Chemical Engineering', 'Civil', 'Mechanical', 'ECE', 'EEE']
 sections =["Section 1","Section 2","Section 3"]
-
+authenticated = False
 app = Flask(__name__)
 cluster = MongoClient('mongodb+srv://gvarshithreddy8:Varshith1@cluster0.xzgxe3m.mongodb.net/?retryWrites=true&w=majority')
 
@@ -35,12 +35,14 @@ def home():
 
 
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
+
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+
+    if not authenticated:
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         # Get the selected values from the form
         year = int(request.form.get('year'))
@@ -71,6 +73,28 @@ def admin():
 
     return render_template('admin.html',years = years,branches=branches,sections= sections )
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    global authenticated  # Access the global variable
+
+    if authenticated:
+        # If already authenticated, redirect to the admin page
+        return redirect(url_for('admin'))
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        # Perform authentication here
+        if username == 'admin' and password == 'password':
+            # Authentication successful
+            authenticated = True
+            return redirect(url_for('admin'))
+        else:
+            # Authentication failed
+            return render_template('login.html', error='Invalid credentials')
+
+    return render_template('login.html')
 
 def save_uploaded_file(file):
     # Save the uploaded file to a temporary location
