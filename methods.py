@@ -1,11 +1,9 @@
 import csv
 from pymongo import MongoClient
 
-def add_students_many(year, branch, section, csv_file):
+def add_students_many(cluster, year, branch, section, csv_file):
     # Connect to MongoDB Atlas cluster
     # Replace <cluster_uri> with your actual MongoDB Atlas connection string
-    cluster_uri = "mongodb+srv://gvarshithreddy8:Varshith1@cluster0.xzgxe3m.mongodb.net/?retryWrites=true&w=majority"
-    cluster = MongoClient(cluster_uri)
 
     # Access the SEM database with the correct casing
     db = cluster.sem  # Replace "SEM" with the correct casing of the existing database
@@ -17,25 +15,22 @@ def add_students_many(year, branch, section, csv_file):
     year_document = studentyear.find_one({'_id': year})
     if year_document is None:
         print(f"Year {year} does not exist in the database.")
-        cluster.close()
         return
     
     branch_documents = year_document['branches']
     matching_branch = next((b for b in branch_documents if b['branch'] == branch), None)
     if matching_branch is None:
         print(f"Branch {branch} does not exist in Year {year}.")
-        cluster.close()
         return
     
     section_documents = matching_branch['sections']
     matching_section = next((s for s in section_documents if s['section'] == section), None)
     if matching_section is None:
         print(f"Section {section} does not exist in Branch {branch} of Year {year}.")
-        cluster.close()
         return
 
-    # Parse the CSV file and append studentdata documents to the section
-    studentdata_collection = db.studentdata
+    # Parse the CSV file and create a list of student documents
+    students = []
     
     with open(csv_file, 'r') as file:
         reader = csv.reader(file)
@@ -48,14 +43,18 @@ def add_students_many(year, branch, section, csv_file):
                 'studentname': studentname
             }
             
-            # Append the student document to the respective section
-            matching_section.setdefault('students', []).append(student)
-    
+            students.append(student)
+
+    # Update the section with the new list of student documents
+    matching_section['students'] = students
+
+    # Replace the section in the studentyear collection
     studentyear.replace_one({'_id': year}, year_document)
     print("Students added successfully.")
 
+
     # Close the MongoDB connection
-    cluster.close()
+    #
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'csv'
@@ -86,3 +85,16 @@ def get_students(yearcollection,Year=None,branch=None,section=None):
     else:
         year = studentyears[Year-1]
         return year['branches'][branchcode]['sections'][section-1]['students']
+
+def get_branches(studentyear,year):
+
+    year1 = studentyear.find_one(year)
+
+    
+    branches = year1['branches']
+    b = []
+    for i in range(len(branches)):
+        
+        b.append(branches[i]['branch'])
+
+    return b

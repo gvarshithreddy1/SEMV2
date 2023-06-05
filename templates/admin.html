@@ -1,31 +1,35 @@
-{% extends 'template.html' %}
+{%extends 'template.html'%}
 
-{% block content %}
-    <div class="container">
-        <h1>Admin Page hi</h1>
-        <form action="/admin" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="csvFile">Upload CSV File:</label>
-                <input type="file" class="form-control-file" id="csvFile" name="csvFile">
-            </div>
-            <button type="submit" class="btn btn-primary">Upload</button>
-        </form>
-        {%if file_uploaded:%}
-        <script>
-            window.onload = function() {
-                showMessage('File uploaded successfully!');
-            };
+{%block content%}
+
+    <h1>Admin Page</h1>
     
-            function showMessage(message) {
-                var messageElement = document.createElement('div');
-                messageElement.textContent = message;
-                document.body.appendChild(messageElement);
-    
-                setTimeout(function() {
-                    messageElement.remove();
-                }, 5000);
-            }
-        </script>
-        {%endif%}
-    </div>
-{% endblock %}
+    <form action="/admin" method="POST" enctype="multipart/form-data">
+        <label for="year">Year:</label>
+        <select name="year" id="year">
+            {%for i in years%}
+            <option value={{i}}>{{i}}</option>
+            {%endfor%}
+        </select><br><br>
+        
+        <label for="branch">Branch:</label>
+        <select name="branch" id="branch">
+            {%for i in branches%}
+            <option value={{i}}>{{i}}</option>
+            {%endfor%}
+        </select><br><br>
+        
+        <label for="section">Section:</label>
+        <select name="section" id="section">
+            {%for i in sections%}
+            <option value='{{i}}'>{{i}}</option>
+            {%endfor%}
+            
+        </select><br><br>
+        
+        <label for="csvFile">CSV File:</label>
+        <input type="file" name="csvFile" id="csvFile"><br><br>
+        
+        <input type="submit" value="Upload">
+    </form>
+{%endblock%}
