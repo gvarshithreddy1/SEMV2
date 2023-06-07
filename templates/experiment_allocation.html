@@ -1,0 +1,44 @@
+{% extends 'template.html' %}
+
+{% block title %}Experiment Allocation{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Experiment Allocation</h1>
+    <form method="POST" action="/allocate">
+        <div class="form-group">
+            <label for="year">Year:</label>
+            <select class="form-control" id="year" name="year">
+                {%for year in years%}
+                <option value={{year}}>{{year}}</option>
+                {%endfor%}
+                
+                <!-- Add more options for available years -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="branch">Branch:</label>
+            <select class="form-control" id="branch" name="branch">
+                {%for branch in branches%}
+                <option value={{branch}}>{{branch}}</option>
+                {%endfor%}
+                
+                <!-- Add more options for available branches -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="section">Section:</label>
+            <select class="form-control" id="section" name="section">
+                {%for i in range(len)%}
+                <option value={{i+1}}>{{sections[i]}}</option>
+                {%endfor%}
+                
+                <!-- Add more options for available sections -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="experiments">Number of Experiments:</label>
+            <input type="number" class="form-control" id="experiments" name="experiments">
+        </div>
+        <button type="submit" class="btn btn-primary">Allocate</button>
+    </form>
+{% endblock %}
