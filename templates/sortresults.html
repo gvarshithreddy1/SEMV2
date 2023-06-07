@@ -1,0 +1,29 @@
+{% extends 'template.html' %}
+
+{% block title %}Sort Results{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Sort Results</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Experiment</th>
+                <th scope="col">Students</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, experiment in (experiments) %}
+            <tr>
+                <th scope="row">{{ index + 1 }}</th>
+                <td>Experiment {{ index + 1 }}</td>
+                <td>
+                    {% for student in experiment %}
+                        {{ student['rollno'] }} - {{ student['studentname'] }}<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

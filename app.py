@@ -1,14 +1,25 @@
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
-import csv,os
+import csv,os,random
 from methods import *
+
+def save_uploaded_file(file):
+    # Save the uploaded file to a temporary location
+    temp_folder = 'temp'
+    os.makedirs(temp_folder, exist_ok=True)
+    file_path = os.path.join(temp_folder, file.filename)
+    file.save(file_path)
+    return file_path
+
 
 years = [1,2,3,4]
 branches = ['CSE', 'IT', 'AIDS', 'AIML', 'Chemical Engineering', 'Civil', 'Mechanical', 'ECE', 'EEE']
-sections =["Section 1","Section 2","Section 3"]
+sections =["Section 1","Section 2","Section 3","Section 4","Section 5"]
 authenticated = False
 app = Flask(__name__)
 cluster = MongoClient('mongodb+srv://gvarshithreddy8:Varshith1@cluster0.xzgxe3m.mongodb.net/?retryWrites=true&w=majority')
+
+
 
 db = cluster.sem
 studentdata = db.studentdata
@@ -19,11 +30,11 @@ else:
     studentyear = db.studentyear
     
 #new code
-year1 = studentyear.find_one(1)
-try:
-    students = year1['branches'][0]['sections'][0]['students']
-except KeyError or NameError:
-    print("No students uploaded yet in the requested branch and section")
+# year1 = studentyear.find_one(1)
+# try:
+#     students = year1['branches'][0]['sections'][0]['students']
+# except KeyError or NameError:
+#     print("No students uploaded yet in the requested branch and section")
 # else:
 #     for student in students:
 #         print(student)
@@ -32,9 +43,6 @@ except KeyError or NameError:
 @app.route("/")
 def home():
     return render_template("home.html", title = "SEM")
-
-
-
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -48,10 +56,6 @@ def admin():
         year = int(request.form.get('year'))
         branch = str(request.form.get('branch'))
         section = str(request.form.get('section'))
-        
-
-        
-
         if 'csvFile' not in request.files:
             return 'No file uploaded'
 
@@ -71,7 +75,7 @@ def admin():
             # Redirect to a success page or render a success template
             return 'File uploaded and processed successfully'
 
-    return render_template('admin.html',years = years,branches=branches,sections= sections )
+    return render_template('admin.html',years = years, branches=branches, sections= sections )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -96,13 +100,20 @@ def login():
 
     return render_template('login.html')
 
-def save_uploaded_file(file):
-    # Save the uploaded file to a temporary location
-    temp_folder = 'temp'
-    os.makedirs(temp_folder, exist_ok=True)
-    file_path = os.path.join(temp_folder, file.filename)
-    file.save(file_path)
-    return file_path
+@app.route('/allocate', methods = ['GET','POST'])
+def allocate():
+    if request.method=='POST':
+        year = int(request.form.get('year'))
+        branch = request.form.get('branch')
+        section = int(request.form.get('section'))
+        num_experiments = int(request.form.get('experiments'))
+        student_data = get_students(studentyear,year,branch,section)
+        experiment_data = allocate_students(num_experiments, student_data )
+
+
+
+        return render_template('sortresults.html',experiments = enumerate(experiment_data))
+    return render_template('experiment_allocation.html', years = years, branches = branches, sections = sections, len = len(sections) )
 
 
 

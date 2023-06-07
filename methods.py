@@ -1,5 +1,6 @@
 import csv
 from pymongo import MongoClient
+import random
 
 def add_students_many(cluster, year, branch, section, csv_file):
     # Connect to MongoDB Atlas cluster
@@ -98,3 +99,33 @@ def get_branches(studentyear,year):
         b.append(branches[i]['branch'])
 
     return b
+
+
+def allocate_students(num_experiments, student_data):
+    # Shuffle the student data randomly
+    random.shuffle(student_data)
+
+    # Calculate the number of students per experiment
+    students_per_experiment = len(student_data) // num_experiments
+
+    # Initialize the experiment allocation results
+    experiments = [[] for _ in range(num_experiments)]
+
+    # Allocate students to experiments
+    for i in range(num_experiments):
+        # Get students for the current experiment
+        start_index = i * students_per_experiment
+        end_index = start_index + students_per_experiment
+        experiment_students = student_data[start_index:end_index]
+
+        # Add the experiment students to the corresponding experiment
+        experiments[i].extend(experiment_students)
+
+    # If there are any remaining students, allocate them randomly to experiments
+    remaining_students = len(student_data) % num_experiments
+    if remaining_students > 0:
+        remaining_students_indices = random.sample(range(len(student_data)), remaining_students)
+        for i, student_index in enumerate(remaining_students_indices):
+            experiments[i].append(student_data[student_index])
+
+    return experiments
