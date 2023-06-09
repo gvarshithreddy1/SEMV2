@@ -15,6 +15,7 @@ def save_uploaded_file(file):
 years = [1,2,3,4]
 branches = ['CSE', 'IT', 'AIDS', 'AIML', 'Chemical Engineering', 'Civil', 'Mechanical', 'ECE', 'EEE']
 sections =["Section 1","Section 2","Section 3","Section 4","Section 5"]
+details = [years,branches,sections]
 authenticated = False
 app = Flask(__name__)
 cluster = MongoClient('mongodb+srv://gvarshithreddy8:Varshith1@cluster0.xzgxe3m.mongodb.net/?retryWrites=true&w=majority')
@@ -116,8 +117,46 @@ def allocate():
     return render_template('experiment_allocation.html', years = years, branches = branches, sections = sections, len = len(sections) )
 
 
+@app.route('/edit',methods = ['GET','POST'])
+def edit():
+        
+    return render_template('get_student_details.html',students=details,len = len(details[2]))
+
+@app.route('/view_students/',methods = ["GET",'POST'])
+def view_students():
+    if request.method=="POST":
+        global students
+        students = {
+            'year':int(request.form.get("year")),
+            'branch': request.form.get("branch"),
+            'section': int(request.form.get('section'))
+        }
+        students_details = get_students(studentyear,students['year'],students['branch'],students['section'])
+        
+        return render_template('view_students.html',students_details = students_details)
+    
 
 
+@app.route('/edit_student/<rollno>')
+def edit_student(rollno):
+    if request.method == "GET":
+        student_rollno = int(rollno)
+        student={}
+        students_details = get_students(studentyear,students['year'],students['branch'],students['section'])
+        for i in students_details:
+            #print(i)
+
+            if student_rollno == i['rollno']:
+                student["studentname"] = i['studentname']
+                student["rollno"] = i['rollno']
+        
+
+    return render_template('edit_student.html', student = student)
+
+@app.route('/changeDB_student', methods = ["POST"])
+def changeDB_student():
+    
+    return "Data changed successfully"
 
 if __name__ == '__main__':
     app.run()

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Student Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Data</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Roll No</th>
+                <th>Student Name</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students_details %}
+            <tr>
+                <td>{{ student.rollno }}</td>
+                <td>{{ student.studentname }}</td>
+                <td><a href="/edit_student/{{ student.rollno }}">Edit</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
